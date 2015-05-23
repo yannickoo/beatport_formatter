@@ -1,0 +1,4 @@
+name = Beatport Formatter
+description = Provides a field formatter for Beatport track URLs.
+core = 7.x
+dependencies[] = link

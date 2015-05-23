@@ -1,0 +1,58 @@
+<?php
+
+/**
+ * @file
+ * Main file for Beatport Formatter module.
+ */
+
+
+/**
+ * Implements hook_field_formatter_info().
+ */
+function beatport_formatter_field_formatter_info() {
+  return array(
+    'beatport_player' => array(
+      'label' => t('Beatport player'),
+      'field types' => array('link_field'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ */
+function beatport_formatter_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+
+  foreach ($items as $delta => $item) {
+    $element[$delta] = array(
+      '#markup' => beatport_formatter_player($item),
+    );
+  }
+
+  return $element;
+}
+
+/**
+ * Format a number in seconds in a duration.
+ *
+ * @param int $value
+ *   The number of seconds.
+ *
+ * @return string
+ *   The duration string.
+ */
+function beatport_formatter_player($item) {
+  $url = $item['url'];
+  $parsed_url = parse_url($url);
+  $path_split = explode('/', $parsed_url['path']);
+  $track_id = isset($path_split[3]) && is_numeric($path_split[3]) ? $path_split[3] : FALSE;
+
+  if (!$track_id) {
+    return '';
+  }
+
+  $markup = '<iframe src="http://embed.beatport.com/player/?id=' . $track_id . '&type=track" width="100%" height="162" frameborder="0" scrolling="no" style="max-width:600px;"></iframe>';
+
+  return $markup;
+}
